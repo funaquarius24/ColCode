@@ -15,7 +15,7 @@ int ProcessingElement::randInt(int min, int max) {
         (int)((double)(max - min + 1) * rand() / (RAND_MAX + 1.0));
 }
 
-void ProcessingElement::rxProcess() {
+void ProcessingElement::rxProcess() { 
     if (reset.read()) {
         ack_rx.write(0);
         current_level_rx = 0;
@@ -262,7 +262,7 @@ bool ProcessingElement::metDeps(){
             //cout << "REACHED!!!" << endl;
             
             mcslCount++;
-            int numb = 100;
+            int numb = 300;
             if(mcslCount >= numb) return false;
             if(mcslCount >= numb -1){
                 //cout << "ID: " << local_id << " mcslCount: " << mcslCount << endl;

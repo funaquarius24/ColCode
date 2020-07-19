@@ -8,6 +8,7 @@ RoutingAlgorithm * RoutingAlgorithms::get(const string & routingAlgorithmName) {
 	if(it == getRoutingAlgorithmsMap()->end())
 		return 0;
 
+	//cout << it->first << endl;;
 	return it->second;
 }
 

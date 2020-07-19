@@ -154,7 +154,7 @@ trace_filename: ""
 
 min_packet_size: 8
 max_packet_size: 8
-packet_injection_rate: 0.04
+packet_injection_rate: 0.06
 probability_of_retransmission: 0.01
 
 # Traffic distribution:
@@ -171,6 +171,6 @@ traffic_distribution: TRAFFIC_MCSL
 # configuration file
 traffic_table_filename: "t.txt"
 
-switch_time: 69000
-ctps: [0.2]
+switch_time: 34000
+ctps: [0.5]
 als: [XY,NEGATIVE_FIRST]

@@ -85,7 +85,7 @@ void Router::txProcess() {
 
     if(GlobalParams::custom_routing_type == "CUSTOM_STATIC"){
         
-        if(sc_time_stamp().to_double() / GlobalParams::clock_period_ps > GlobalParams::switch_time && is_done ){
+        if(sc_time_stamp().to_double() / GlobalParams::clock_period_ps > GlobalParams::switch_time && is_done ){cout << "Switched!!" << endl;
             routingAlgorithm = RoutingAlgorithms::get("NEGATIVE_FIRST");
             int buffers_used = 0;
             int max_buffers = 0;
@@ -107,6 +107,7 @@ void Router::txProcess() {
     }
 
     int nawa = sc_time_stamp().to_double() / GlobalParams::clock_period_ps;
+    
     if(GlobalParams::custom_routing_type == "CUSTOM_DYN_REP" && nawa % 1000 == 0){
         for (int i = 0; i < DIRECTIONS + 1; i++)
             free_slots[i].write(buffer[i][DEFAULT_VC].getCurrentFreeSlots());
@@ -121,18 +122,54 @@ void Router::txProcess() {
 
         }
         double congestValue = buffers_used * 1.0 / max_buffers;
-        int adaptive_position = makeAdaptive(congestValue);
+        //int adaptive_position = makeAdaptive(congestValue);
 
         //cout << "buffers_used: " << buffers_used << endl;
+
+        if(congestValue >= CTPs[0]){//cout << "time: " << nawa << " id: " << local_id << " congest: " << congestValue << " congest_max: " << GlobalParams::congestValue_max << endl;
+            GlobalParams::congest_no++;
+            if(congestValue > GlobalParams::congestValue_max){
+                
+                GlobalParams::congestValue_max = congestValue;
+            }
+        }
         
 
 
-        if(prevAlgo != ALs.at(adaptive_position)){
+        /* if(prevAlgo != ALs.at(adaptive_position)){
             routingAlgorithm = RoutingAlgorithms::get(ALs.at(adaptive_position));
             //cout << "prev: " << prevAlgo << " now: " << ALs.at(adaptive_position) << " congest: " << congestValue << endl;
             prevAlgo = ALs.at(adaptive_position);
             
+        } */
+    }else if(GlobalParams::custom_routing_type == "CUSTOM_DYN_REP" && nawa % 1000 == 1){
+
+        if(GlobalParams::congest_no > 5){//cout << local_id << endl;
+            int adaptive_position = makeAdaptive(GlobalParams::congestValue_max);
+
+            //cout << "buffers_used: " << buffers_used << endl;
+
+            if(prevAlgo != ALs.at(adaptive_position)){
+                routingAlgorithm = RoutingAlgorithms::get(ALs.at(adaptive_position));
+                //cout << "local_id: " << local_id << "time: " << nawa << " prev: " << prevAlgo << " now: " << ALs.at(adaptive_position) << " congest: " << GlobalParams::congestValue_max << endl;
+                prevAlgo = ALs.at(adaptive_position);
+                
+            }
+        }else
+        {
+            if(prevAlgo != ALs.at(0)){
+                routingAlgorithm = RoutingAlgorithms::get(ALs.at(0));
+                //cout << "time: " << nawa << " prev: " << prevAlgo << " now: " << ALs.at(0) << " congest: " << GlobalParams::congestValue_max << endl;
+                prevAlgo = ALs.at(0);
+                
+            }
         }
+        
+        if(local_id == 63){
+            GlobalParams::congestValue_max = 0;
+            GlobalParams::congest_no = 0;
+        }
+        
     }
     
 

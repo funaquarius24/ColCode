@@ -1,2 +1,9 @@
-./noxim -config ../configs/mcsl_default.yaml -seed 7688787787
-sweet spot: 69000
+./noxim -config ../configs/mcsl_default.yaml -seed 7688787787 -custom CUSTOM_DYN_REP
+./noxim -config ../configs/mcsl_default.yaml -seed 7688787787 -routing NEGATIVE_FIRST
+ ./noxim -config ../configs/mcsl_default.yaml -seed 7688787787 -custom CUSTOM_STATIC -switch 34000
+
+
+
+The python file "other/reader.py" can be used to run all possible test cases.
+
+

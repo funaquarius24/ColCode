@@ -125,7 +125,7 @@ int sc_main(int arg_num, char *arg_vet[])
     file=fopen(filename,"r");
     if (file==NULL){
         fstream uidlFile(filename, std::fstream::in | std::fstream::out | std::fstream::app);
-        uidlFile << "Routing_Algo,PIR,Total,custom_type";
+        uidlFile << "Routing_Algo,PIR,Total,custom_type,ALs";
         for(it = allPacketCounts.begin(); it != allPacketCounts.end(); ++it ){
             uidlFile << "," << it -> first;
             if(it == allPacketCounts.end()) cout << "gotcha!" << endl;
@@ -141,7 +141,15 @@ int sc_main(int arg_num, char *arg_vet[])
         uidlFile << GlobalParams::routing_algorithm << ",";
         uidlFile << GlobalParams::packet_injection_rate << ",";
         uidlFile << gs.getReceivedPackets() << ",";
-        uidlFile << GlobalParams::custom_routing_type;
+        uidlFile << GlobalParams::custom_routing_type << ",";
+        string tmp1 = "";
+        if(GlobalParams::custom_routing_type == "CUSTOM_STATIC" || GlobalParams::custom_routing_type == "CUSTOM_DYN_REP"){
+            for (size_t i = 0; i < GlobalParams::als.size(); i++)
+            {
+                tmp1 += GlobalParams::als.at(i);
+            }
+        }
+        uidlFile << tmp1;
         for(it = allPacketCounts.begin(); it != allPacketCounts.end(); ++it ){
             uidlFile << "," << it -> second;
         }
