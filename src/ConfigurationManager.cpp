@@ -72,6 +72,7 @@ void loadConfiguration() {
     GlobalParams::min_packet_size = readParam<int>(config, "min_packet_size");
     GlobalParams::max_packet_size = readParam<int>(config, "max_packet_size");
     GlobalParams::routing_algorithm = readParam<string>(config, "routing_algorithm");
+    GlobalParams::custom_routing_type = readParam<string>(config, "custom_routing_type");
     GlobalParams::routing_table_filename = readParam<string>(config, "routing_table_filename"); 
     GlobalParams::selection_strategy = readParam<string>(config, "selection_strategy");
     GlobalParams::packet_injection_rate = readParam<double>(config, "packet_injection_rate");
@@ -86,10 +87,12 @@ void loadConfiguration() {
     GlobalParams::rnd_generator_seed = time(NULL);
     GlobalParams::detailed = readParam<bool>(config, "detailed");
     GlobalParams::dyad_threshold = readParam<double>(config, "dyad_threshold");
+    GlobalParams::switch_time = readParam<double>(config, "switch_time");
     GlobalParams::max_volume_to_be_drained = readParam<unsigned int>(config, "max_volume_to_be_drained");
     //GlobalParams::hotspots;
     GlobalParams::show_buffer_stats = readParam<bool>(config, "show_buffer_stats");
     GlobalParams::use_winoc = readParam<bool>(config, "use_winoc");
+    GlobalParams::use_routing_selection = readParam<bool>(config, "use_routing_selection");
     GlobalParams::winoc_dst_hops = readParam<int>(config, "winoc_dst_hops",0);
     GlobalParams::use_powermanager = readParam<bool>(config, "use_wirxsleep");
     
@@ -135,6 +138,9 @@ void loadConfiguration() {
     }
 
     GlobalParams::power_configuration = power_config["Energy"].as<PowerConfig>();
+
+    GlobalParams::ctps = config["ctps"].as<vector<double>>();
+    GlobalParams::als = config["als"].as<vector<string>>();
 }
 
 void setBufferToTile(int depth)
@@ -266,6 +272,7 @@ void showConfig()
          << "- n_virtual_channels = " << GlobalParams::n_virtual_channels << endl
          << "- max_packet_size = " << GlobalParams::max_packet_size << endl
          << "- routing_algorithm = " << GlobalParams::routing_algorithm << endl
+         << "- custom_routing_type = " << GlobalParams::custom_routing_type << endl
       // << "- routing_table_filename = " << GlobalParams::routing_table_filename << endl
          << "- selection_strategy = " << GlobalParams::selection_strategy << endl
          << "- packet_injection_rate = " << GlobalParams::packet_injection_rate << endl
@@ -490,6 +497,8 @@ void parseCmdLine(int arg_num, char *arg_vet[])
 		GlobalParams::flit_size = atoi(arg_vet[++i]);
 	    else if (!strcmp(arg_vet[i], "-winoc")) 
 		GlobalParams::use_winoc = true;
+        else if (!strcmp(arg_vet[i], "-routing_selection")) 
+		GlobalParams::use_routing_selection = true;
 	    else if (!strcmp(arg_vet[i], "-winoc_dst_hops")) 
 	    {
             GlobalParams::winoc_dst_hops = atoi(arg_vet[++i]);
@@ -518,7 +527,13 @@ void parseCmdLine(int arg_num, char *arg_vet[])
 		    GlobalParams::routing_table_filename = arg_vet[++i];
 		    GlobalParams::packet_injection_rate = 0;
 		} 
-	    } 
+	    }
+        else if(!strcmp(arg_vet[i], "-custom")) {
+            GlobalParams::custom_routing_type = arg_vet[++i];
+        }
+        else if(!strcmp(arg_vet[i], "-switch")) {
+            GlobalParams::switch_time = atof(arg_vet[++i]);
+        }
 	    else if (!strcmp(arg_vet[i], "-sel")) {
 		GlobalParams::selection_strategy = arg_vet[++i];
 	    } 

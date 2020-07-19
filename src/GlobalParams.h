@@ -154,6 +154,7 @@ struct GlobalParams {
     static int min_packet_size;
     static int max_packet_size;
     static string routing_algorithm;
+    static string custom_routing_type;
     static string routing_table_filename;
     static string selection_strategy;
     static double packet_injection_rate;
@@ -172,9 +173,11 @@ struct GlobalParams {
     static bool detailed;
     static vector <pair <int, double> > hotspots;
     static double dyad_threshold;
+    
     static unsigned int max_volume_to_be_drained;
     static bool show_buffer_stats;
     static bool use_winoc;
+    static bool use_routing_selection; // ism this will determine whether to do dynamic routing algo selection
     static int winoc_dst_hops;
     static bool use_powermanager;
     static ChannelConfig default_channel_configuration;
@@ -186,6 +189,13 @@ struct GlobalParams {
     // out of yaml configuration
     static bool ascii_monitor;
     static int channel_selection;
+    
+    // ism 
+    static vector<double> ctps;
+    static vector<string> als;
+    static int congest_no;
+    static int switch_time;
+    static double congestValue_max;
 };
 
 #endif

@@ -28,6 +28,7 @@ int GlobalParams::flit_size;
 int GlobalParams::min_packet_size;
 int GlobalParams::max_packet_size;
 string GlobalParams::routing_algorithm;
+string GlobalParams::custom_routing_type;
 string GlobalParams::routing_table_filename;
 string GlobalParams::selection_strategy;
 double GlobalParams::packet_injection_rate;
@@ -45,10 +46,12 @@ int GlobalParams::stats_warm_up_time;
 int GlobalParams::rnd_generator_seed;
 bool GlobalParams::detailed;
 double GlobalParams::dyad_threshold;
+
 unsigned int GlobalParams::max_volume_to_be_drained;
 vector <pair <int, double> > GlobalParams::hotspots;
 bool GlobalParams::show_buffer_stats;
 bool GlobalParams::use_winoc;
+bool GlobalParams::use_routing_selection;
 int GlobalParams::winoc_dst_hops;
 bool GlobalParams::use_powermanager;
 ChannelConfig GlobalParams::default_channel_configuration;
@@ -60,3 +63,9 @@ PowerConfig GlobalParams::power_configuration;
 // out of yaml configuration
 bool GlobalParams::ascii_monitor;
 int GlobalParams::channel_selection;
+
+vector<double> GlobalParams::ctps;
+vector<string> GlobalParams::als;
+int GlobalParams::congest_no = 0;
+int GlobalParams::switch_time;
+double GlobalParams::congestValue_max;

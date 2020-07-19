@@ -33,7 +33,7 @@ extern unsigned int drained_volume;
 SC_MODULE(Router)
 {
     friend class Selection_NOP;
-    friend class Selection_BUFFER_LEVEL;
+    friend class Selection_BUFFER_LEVEL; 
 
     // I/O Ports
     sc_in_clk clock;		                  // The input clock for the router
@@ -97,6 +97,20 @@ SC_MODULE(Router)
         sensitive << clock.pos();
 
         routingAlgorithm = RoutingAlgorithms::get(GlobalParams::routing_algorithm);
+        prevAlgo = GlobalParams::routing_algorithm;
+
+        if(GlobalParams::custom_routing_type == "CUSTOM_STATIC"  ){
+          routingAlgorithm = RoutingAlgorithms::get(ALs.at(0));
+          GlobalParams::routing_algorithm = ALs.at(0);
+          GlobalParams::selection_strategy = "NOP";
+        }else if(GlobalParams::custom_routing_type == "CUSTOM_DYN_REP"){
+          routingAlgorithm = RoutingAlgorithms::get(ALs.at(0));
+          GlobalParams::routing_algorithm = ALs.at(0);
+          CTPs = GlobalParams::ctps;
+          ALs = GlobalParams::als;
+          GlobalParams::selection_strategy = "NOP";
+        }
+        
 
         if (routingAlgorithm == 0)
         {
@@ -132,6 +146,14 @@ SC_MODULE(Router)
     vector<int> getNextHops(int src, int dst);
     int start_from_port;	     // Port from which to start the reservation cycle
     int start_from_vc[DIRECTIONS+2]; // VC from which to start the reservation cycle for the specific port
+
+    vector<double> CTPs{0.6};
+    vector<string> ALs{"XY", "WEST_FIRST"};
+    string prevAlgo;
+
+    int makeAdaptive(double CL);
+    bool is_done = true;
+    //double congestValue_max = 0;
 
     vector<int> nextDeltaHops(RouteData rd);
   public:

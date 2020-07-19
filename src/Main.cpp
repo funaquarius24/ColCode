@@ -72,7 +72,7 @@ int sc_main(int arg_num, char *arg_vet[])
 	sc_trace(tf, clock, "clock");
 
 	for (int i = 0; i < GlobalParams::mesh_dim_x; i++) {
-	    for (int j = 0; j < GlobalParams::mesh_dim_y; j++) {
+	    for (int j = 0; j < GlobalParams::mesh_dim_y; j++) { 
 		char label[64];
 
 		sprintf(label, "req(%02d)(%02d).east", i, j);
@@ -125,7 +125,7 @@ int sc_main(int arg_num, char *arg_vet[])
     file=fopen(filename,"r");
     if (file==NULL){
         fstream uidlFile(filename, std::fstream::in | std::fstream::out | std::fstream::app);
-        uidlFile << "Routing_Algo,PIR,Total";
+        uidlFile << "Routing_Algo,PIR,Total,custom_type";
         for(it = allPacketCounts.begin(); it != allPacketCounts.end(); ++it ){
             uidlFile << "," << it -> first;
             if(it == allPacketCounts.end()) cout << "gotcha!" << endl;
@@ -140,7 +140,8 @@ int sc_main(int arg_num, char *arg_vet[])
     {
         uidlFile << GlobalParams::routing_algorithm << ",";
         uidlFile << GlobalParams::packet_injection_rate << ",";
-        uidlFile << gs.getReceivedPackets();
+        uidlFile << gs.getReceivedPackets() << ",";
+        uidlFile << GlobalParams::custom_routing_type;
         for(it = allPacketCounts.begin(); it != allPacketCounts.end(); ++it ){
             uidlFile << "," << it -> second;
         }

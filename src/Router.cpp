@@ -83,6 +83,61 @@ void Router::rxProcess() {
 
 void Router::txProcess() {
 
+    if(GlobalParams::custom_routing_type == "CUSTOM_STATIC"){
+        
+        if(sc_time_stamp().to_double() / GlobalParams::clock_period_ps > GlobalParams::switch_time && is_done ){
+            routingAlgorithm = RoutingAlgorithms::get("NEGATIVE_FIRST");
+            int buffers_used = 0;
+            int max_buffers = 0;
+            for (int i = 0; i < DIRECTIONS; i++) {
+
+                if (free_slots[i] == NOT_VALID) continue;
+
+                buffers_used += GlobalParams::buffer_depth - free_slots[i];
+                max_buffers += GlobalParams::buffer_depth;
+
+                //int flits = GlobalParams::buffer_depth - free_slots_neighbor[i];
+                //if (flits > (int)(GlobalParams::buffer_depth * GlobalParams::dyad_threshold))
+                    //return true;
+            }
+            int nawa = sc_time_stamp().to_double() / GlobalParams::clock_period_ps;
+            //cout << "Time: " << nawa << " congest: " << buffers_used * 1.0 / max_buffers << " id: " << local_id << endl;
+            is_done = false;
+        }
+    }
+
+    int nawa = sc_time_stamp().to_double() / GlobalParams::clock_period_ps;
+    if(GlobalParams::custom_routing_type == "CUSTOM_DYN_REP" && nawa % 1000 == 0){
+        for (int i = 0; i < DIRECTIONS + 1; i++)
+            free_slots[i].write(buffer[i][DEFAULT_VC].getCurrentFreeSlots());
+        int buffers_used = 0;
+        int max_buffers = 0;
+        for (int i = 0; i < DIRECTIONS; i++) {
+
+            if (free_slots[i] == NOT_VALID) continue;
+
+            buffers_used += GlobalParams::buffer_depth - free_slots[i];
+            max_buffers += GlobalParams::buffer_depth;
+
+        }
+        double congestValue = buffers_used * 1.0 / max_buffers;
+        int adaptive_position = makeAdaptive(congestValue);
+
+        //cout << "buffers_used: " << buffers_used << endl;
+        
+
+
+        if(prevAlgo != ALs.at(adaptive_position)){
+            routingAlgorithm = RoutingAlgorithms::get(ALs.at(adaptive_position));
+            //cout << "prev: " << prevAlgo << " now: " << ALs.at(adaptive_position) << " congest: " << congestValue << endl;
+            prevAlgo = ALs.at(adaptive_position);
+            
+        }
+    }
+    
+
+    
+
     if (reset.read()) {
         // Clear outputs and indexes of transmitting protocol
         for (int i = 0; i < DIRECTIONS + 2; i++) {
@@ -432,7 +487,6 @@ int Router::NoPScore(const NoP_data & nop_data,
 
         score += available * free_slots;
     }
-
     return score;
 }
 
@@ -576,4 +630,21 @@ bool Router::connectedHubs(int src_hub, int dst_hub) {
         return false;
     else
         return true;
+}
+
+int Router::makeAdaptive(double CL){
+    int algo_position = 0;
+    for(uint i = 0; i < CTPs.size(); i++){
+        if(CL < CTPs.at(i)){
+            algo_position = i;
+            //cout << "+++++++++++++++++" << endl;
+        }else{
+            algo_position = i + 1;
+            //cout << "----------------------" << endl;
+        }
+    }
+
+    return algo_position;
+
+
 }

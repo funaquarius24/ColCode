@@ -119,7 +119,7 @@ bool ProcessingElement::canShot(Packet & packet) {
     if (GlobalParams::traffic_distribution != TRAFFIC_TABLE_BASED) {
         if(GlobalParams::traffic_distribution == TRAFFIC_MCSL )
         {
-            if(now - GlobalParams::reset_time > GlobalParams::stats_warm_up_time || true){
+            if(now - GlobalParams::reset_time > GlobalParams::stats_warm_up_time){
                 
                 mcsl_ready = true;
                 
@@ -132,7 +132,7 @@ bool ProcessingElement::canShot(Packet & packet) {
 
                     if(shot){
                         if(list_of_taskInt.front().outgoing_edge_dep_list.size() > 0){
-                            //cout << outgoing_dep_edge_list -> size() << endl;
+                            //cout << outgoing_dep_edge_list -> size() << endl;  
                             //packet = traffic_mcsl();
                             
                             traffic_mcsl();
@@ -266,7 +266,7 @@ bool ProcessingElement::metDeps(){
             if(mcslCount >= numb) return false;
             if(mcslCount >= numb -1){
                 //cout << "ID: " << local_id << " mcslCount: " << mcslCount << endl;
-                cout << local_id << ", " ;
+                //cout << local_id << ", " ;
             }
             local_rec_proc = *rec_proc;
 

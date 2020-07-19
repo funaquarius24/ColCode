@@ -18,7 +18,7 @@ vector<int> Routing_DYAD::route(Router * router, const RouteData & routeData)
 
     if (!odd_even)
     {
-        odd_even = RoutingAlgorithms::get("ODD_EVEN");
+        odd_even = RoutingAlgorithms::get("ODD_EVEN"); 
         
         if (!odd_even)
             assert(false);

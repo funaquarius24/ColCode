@@ -1,0 +1,8 @@
+dimxy: 8x8
+topology: MESH
+routing: [XY,DELTA,WEST_FIRST,NORTH_LAST,NEGATIVE_FIRST,ODD_EVEN,DYAD]
+custom_routing_type: [NONE,CUSTOM_STATIC,CUSTOM_DYN_REP]
+pir: [0.1,0.3,0.05]
+
+
+
